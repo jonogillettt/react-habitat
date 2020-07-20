@@ -116,9 +116,25 @@ export default class Habitat {
 				// Convert prop name from hyphens to camel case
 				const name = getNameFor(HABITAT_PROP_REF, a.name);
 
-				// Set the reference to the global object
-				props[name] = window[a.value];
+				if (a.value.includes('.')) {
+					const pathSegments = a.value.split('.').reverse();
+					let value = window;
 
+					while (pathSegments.length > 0) {
+						if (!value) {
+							Logger.warn('', 'Couldn\'t follow nested path', a.value, 'to reference in global object');
+							value = null;
+							break;
+						}
+						value = value[pathSegments.pop()];
+					}
+
+          // Set the reference to the global object
+					props[name] = value;
+				} else {
+          // Set the reference to the global object
+					props[name] = window[a.value];
+				}
 			}
 		}
 

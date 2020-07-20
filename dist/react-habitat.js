@@ -1016,8 +1016,25 @@ return /******/ (function(modules) { // webpackBootstrap
 									// Convert prop name from hyphens to camel case
 									var _name2 = getNameFor(HABITAT_PROP_REF, a.name);
 
-									// Set the reference to the global object
-									props[_name2] = window[a.value];
+									if (a.value.includes('.')) {
+										var pathSegments = a.value.split('.').reverse();
+										var _value = window;
+
+										while (pathSegments.length > 0) {
+											if (!_value) {
+												_Logger2.default.warn('', 'Couldn\'t follow nested path', a.value, 'to reference in global object');
+												_value = null;
+												break;
+											}
+											_value = _value[pathSegments.pop()];
+										}
+
+										// Set the reference to the global object
+										props[_name2] = _value;
+									} else {
+										// Set the reference to the global object
+										props[_name2] = window[a.value];
+									}
 								}
 				}
 
