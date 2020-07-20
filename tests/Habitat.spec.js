@@ -160,6 +160,21 @@ describe('Habitat parse', () => {
 		expect(results.states).toBe(myStates);
 	});
 
+	it('should follow nested references', () => {
+
+		// Our global variable
+		const australia = window.australia = {}
+		const myStates = australia.myStates = ['VIC','QLD','NT', 'NSW', 'ACT', 'WA', 'SA', 'TAS'];
+
+		// Pass it in by the reference attribute
+		node.setAttribute('data-r-prop-states', 'australia.myStates');
+
+		const results = Habitat.parseProps(node);
+
+		expect(results.states).toBeDefined();
+		expect(results.states).toBe(myStates);
+	});
+
 
 });
 
